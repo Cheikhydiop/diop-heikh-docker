@@ -1,0 +1,358 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "School Management API",
+      "version": "1.0.0",
+      "description": "API documentation for managing users, promotions, and learners."
+    },
+    "components": {
+      "securitySchemes": {
+        "BearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    },
+    "security": [
+      {
+        "BearerAuth": []
+      }
+    ],
+    "paths": {
+      "/api/login": {
+        "post": {
+          "summary": "User login",
+          "tags": ["Authentication"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": { "type": "string" },
+                    "password": { "type": "string" }
+                  },
+                  "required": ["email", "password"]
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Login successful"
+              },
+              "401": {
+                "description": "Invalid credentials"
+              }
+            }
+          }
+        }
+      },
+      "/api/v1/auth/refresh": {
+        "post": {
+          "summary": "Refresh JWT token",
+          "tags": ["Authentication"],
+          "responses": {
+            "200": {
+              "description": "Token refreshed successfully"
+            },
+            "401": {
+              "description": "Invalid token"
+            }
+          }
+        }
+      },
+      "/api/v1/auth/logout": {
+        "post": {
+          "summary": "User logout",
+          "tags": ["Authentication"],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Logout successful"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          }
+        }
+      },
+      "/api/users": {
+        "get": {
+          "summary": "Get all users",
+          "tags": ["Users"],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "A list of users",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer" },
+                        "name": { "type": "string" },
+                        "email": { "type": "string" },
+                        "created_at": { "type": "string", "format": "date-time" },
+                        "updated_at": { "type": "string", "format": "date-time" }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          }
+        },
+        "post": {
+          "summary": "Create a new user",
+          "tags": ["Users"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "email": { "type": "string" },
+                    "password": { "type": "string" }
+                  },
+                  "required": ["name", "email", "password"]
+                }
+              }
+            },
+            "responses": {
+              "201": {
+                "description": "User created successfully"
+              },
+              "400": {
+                "description": "Invalid input"
+              }
+            }
+          }
+        }
+      },
+      "/api/promotions": {
+        "get": {
+          "summary": "Get all promotions",
+          "tags": ["Promotions"],
+          "responses": {
+            "200": {
+              "description": "A list of promotions",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer" },
+                        "title": { "type": "string" },
+                        "status": { "type": "string" },
+                        "created_at": { "type": "string", "format": "date-time" },
+                        "updated_at": { "type": "string", "format": "date-time" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "summary": "Create a new promotion",
+          "tags": ["Promotions"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "title": { "type": "string" },
+                    "status": { "type": "string" }
+                  },
+                  "required": ["title", "status"]
+                }
+              }
+            },
+            "responses": {
+              "201": {
+                "description": "Promotion created successfully"
+              },
+              "400": {
+                "description": "Invalid input"
+              }
+            }
+          }
+        }
+      },
+      "/api/promotions/encours": {
+        "get": {
+          "summary": "Get ongoing promotions",
+          "tags": ["Promotions"],
+          "responses": {
+            "200": {
+              "description": "List of ongoing promotions"
+            }
+          }
+        }
+      },
+      "/api/v1/promotions/{id}/stats": {
+        "get": {
+          "summary": "Get statistics for a specific promotion",
+          "tags": ["Promotions"],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "Promotion ID",
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Promotion statistics"
+            },
+            "404": {
+              "description": "Promotion not found"
+            }
+          }
+        }
+      },
+      "/api/v1/apprenants": {
+        "get": {
+          "summary": "Get all learners",
+          "tags": ["Apprenants"],
+          "responses": {
+            "200": {
+              "description": "A list of learners",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "integer" },
+                        "name": { "type": "string" },
+                        "email": { "type": "string" },
+                        "created_at": { "type": "string", "format": "date-time" },
+                        "updated_at": { "type": "string", "format": "date-time" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "summary": "Create a new learner",
+          "tags": ["Apprenants"],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "email": { "type": "string" }
+                  },
+                  "required": ["name", "email"]
+                }
+              }
+            },
+            "responses": {
+              "201": {
+                "description": "Learner created successfully"
+              },
+              "400": {
+                "description": "Invalid input"
+              }
+            }
+          }
+        }
+      },
+      "/api/v1/apprenants/trashed": {
+        "get": {
+          "summary": "Get trashed learners",
+          "tags": ["Apprenants"],
+          "responses": {
+            "200": {
+              "description": "A list of trashed learners"
+            }
+          }
+        }
+      },
+      "/api/v1/apprenants/{id}/restore": {
+        "post": {
+          "summary": "Restore a trashed learner",
+          "tags": ["Apprenants"],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "Learner ID",
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Learner restored successfully"
+            },
+            "404": {
+              "description": "Learner not found"
+            }
+          }
+        }
+      },
+      "/api/v1/apprenants/{id}/force": {
+        "delete": {
+          "summary": "Force delete a learner",
+          "tags": ["Apprenants"],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "Learner ID",
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Learner deleted successfully"
+            },
+            "404": {
+              "description": "Learner not found"
+            }
+          }
+        }
+      }
+    }
+  }
+  
